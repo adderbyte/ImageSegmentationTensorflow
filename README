@@ -1,8 +1,8 @@
 
 ################################################################################
-							Welcome !
+		Welcome !
 
-			This is the read me for the image segmentation task
+    This is the read me for the image segmentation 
 ################################################################################
 
 
@@ -12,9 +12,9 @@
 QUICK START
 ############
 
-There is ipython notebook named segmentation.ipynb. Launch this note book
+There is ipython notebook named casestudy.ipynb. Launch this note book
 in order to see how to use the model. It is pretty easy and a maximum one 
-liner would be enough
+liner code would be enough
 
 To install the requirement files
 
