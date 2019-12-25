@@ -1,0 +1,46 @@
+datapath:
+    imageTrainDir: /images/train
+    imageTargetDir: /images/target
+    ImageTargetPairPickled: /images/preprocessed/
+    pickleFilename: AllData
+
+model:
+    conv1:
+        - 3
+        - 3
+        - 16
+    conv2:
+        - 3
+        - 3
+        - 32
+    conv3:
+        - 3
+        - 3
+        - 16
+    conv4:
+        - 5
+        - 5
+        - 2
+    padding1: 
+        - 1
+        - 1
+    padding2: 
+        - 1
+        - 1
+    padding3: 
+        - 1
+        - 1
+    padding4: 
+        - 2
+        - 2
+    Upsample1: UpsampleBilinear
+    Upsample2: UpsampleNearNeigh
+    loss1: iou
+    loss2: diceCoeff
+    logpath: /log/
+    save: /savedModel/
+    output: /testOutput/
+    validationSize: 3
+    TestSize: 3
+    TrainSize: 3
+    DataSize: 142

@@ -1,0 +1,168 @@
+
+################################################################################
+							Welcome !
+
+			This is the read me for the image segmentation task
+################################################################################
+
+
+
+
+############
+QUICK START
+############
+
+There is ipython notebook named segmentation.ipynb. Launch this note book
+in order to see how to use the model. It is pretty easy and a maximum one 
+liner would be enough
+
+To install the requirement files
+
+pip install -r /path/to/requirements.txt
+
+
+As an example :
+				'''
+				import train
+
+				# import imageProcessor  # needed only if one wants to generate more data
+
+				# to train
+				trainer =  train.TensorFlowTrainer(validation=False) # trains mode
+				trainer.predict(); # starts training the model
+
+				# test
+				tester =  train.TensorFlowTrainer(validation=False) # 
+				tester.predict(restore=True, test=True)
+
+
+				'''
+#######
+Use Docker
+######
+
+###### To create the Docker image from the Dockerfile type:
+		
+			'''
+				docker build -t casestudy .
+			'''
+
+
+Should there be connection error do the following
+sudo usermod -aG docker 'your username'
+sudo service docker restart 
+Then restart the system
+
+
+This instructs docker to build an image using:
+
+The current directory as the context from the last argument .
+To run this image, you can type:
+
+		'''
+
+		docker run --init --rm -it -p 8888:8888 casestudy
+
+		'''
+
+Copy/paste this URL into your browser when you connect for the first time,
+to login with a token if token is set:
+
+        http://(5d5ca0c4770d or 127.0.0.1):8888/?token=45c4630564334fa28299d7d7f39694f9be462c903a4eb084
+
+
+
+############
+MAIN  MODULES
+############
+There are 4 main files: 
+
+(1)
+The image processing file imageProcessor.py 
+
+It performs the data augmentation
+This is necessary so that we can have enough data to work with;
+This module can be tweaked using the enhanceparameter to generate more data
+But I have sticked with generating 24 data sets (feel free to edit to generate more points], I have commented out some parts because too much data slows down my old system -- aha). 
+Note that these are noisy the generated data augmented data are approximately
+version of the real data but it gives us flexibility to do more training /testing
+implementation check. Training with data artefact might affect training,
+
+
+
+(2)
+The train.py file
+This is the main control logic of the entire module. It calls the image
+processor and model modules at the appropriate training point.
+This way one would have a central launch point for debugging and testing modules.
+
+(3)
+model.py
+This file does the actual training, testing and optimization
+
+(4)
+config.yaml
+Bears the configuration parameters needed for the entire module
+
+
+The entire module is linked in this way. Calling train checks if the 
+config file exist and then read the data set. It calls the image processor to
+generate more data.
+Once data has been prepared. model can be initialised with the data set
+and training starts.
+Model is saved after training and setting the train to reuse and test tells
+the module to reload module and test
+
+I am aware of the importance of batch normalization , dropout but I have left those
+out from the pipeline since there are not enough clean data to work with. These can 
+be added easily.
+
+
+############
+The Questions Answered
+############
+
+Ideally there are 3 appraoches to follow if the model can not fit to a single GPU
+
+– reduce  batch size, which might hinder both your training speed and accuracy.
+– distribute  model among multiple GPU(s). (data parallelism)
+– reduce your model size, if previous options do not work.
+
+TensorFlow supports  a  model paprallelism. A naive model parallelism file implementation has been included in the example code. Note that the target would be to get best performance (space and time)
+given the memory budget.
+
+
+A typical advanced strategy is to conservatively allocate GPU memory for the immediate usage
+of a given layer’s computation . This is explained below
+
+############
+Extended Answer 
+############
+The data in the  GPU memory can be grouped into 4 functionalities based on functionality:
+– Model Parameters (Weights)
+– Feature Maps
+– Gradient Maps
+– Workspace
+
+The feature maps consume more space than the others. It has been noted taht for the usual forward pass the features maps get used in the next layer but remain dormant in GPU memory
+and get used only once in the backward pass . This (previous) fact can be exploited by offloading feature maps after they are generated and prefetched back to GPU memory  for reuse in backward  process. This strategy has been used in Virtualized DNN but it suffers from longer training time.
+
+############
+Best  Configuration for Memory /Space Benefits 
+############
+To get best performance one needs to consider 2 important factors
+-- do we offload/prefetch it
+-- what algorithm do we use for its forward/backward process (faster algorithm means more space required).
+
+Since the layers closer to inputs have longer reuse distance,  it is better to offload/prefetch these layers first. 
+ 
+The choice of algorithm can be simplified by ensuring each forward and backward pass use same algorithm. The ultimate aim would be to achieve a good space/time tradeoff for training
+
+
+
+
+ Source : https://arxiv.org/pdf/1602.08124.pdf
+
+
+
+
