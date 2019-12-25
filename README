@@ -23,12 +23,12 @@ pip install -r /path/to/requirements.txt
 
 As an example :
 				'''
-				import train
+				import train3
 
 				# import imageProcessor  # needed only if one wants to generate more data
 
 				# to train
-				trainer =  train.TensorFlowTrainer(validation=False) # trains mode
+				trainer =  train3.TensorFlowTrainer(validation=False) # trains mode
 				trainer.predict(validation=True); # starts training the model
 
 				# test
