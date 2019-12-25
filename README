@@ -29,11 +29,10 @@ As an example :
 
 				# to train
 				trainer =  train.TensorFlowTrainer(validation=False) # trains mode
-				trainer.predict(); # starts training the model
+				trainer.predict(validation=True); # starts training the model
 
 				# test
-				tester =  train.TensorFlowTrainer(validation=False) # 
-				tester.predict(restore=True, test=True)
+				trainer.predict(restore=True, test=True)
 
 
 				'''
