@@ -3,5 +3,5 @@ tensorflow==1.15.0
 Pillow==6.2.0
 scikit-image==0.15.0
 numpy==1.17.2
-pyyaml==5.1.2
+pyyaml==5.4
 matplotlib==3.1.1
